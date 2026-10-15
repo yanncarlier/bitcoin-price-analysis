@@ -10,3 +10,7 @@
 pyvenv.cfg
 .venv
 pip-selfcheck.json
+
+# Python bytecode
+__pycache__/
+*.py[cod]

@@ -1,11 +1,16 @@
-# bitcoin_regression_v1.py  (fixed & improved)
+# power-law-trend.py  (fixed & improved)
 import numpy as np
 import pandas as pd
+from pathlib import Path
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+# Resolve paths from the repo root so the script runs from any working directory
+REPO_ROOT = Path(__file__).resolve().parent.parent
+PRICES_CSV = REPO_ROOT / 'data' / 'bitcoin-monthly-prices.csv'
+OUTPUT_PNG = REPO_ROOT / 'charts' / 'power-law-trend.png'
 # Load data
-df = pd.read_csv('bitcoin_monthly_prices.csv', parse_dates=['date'])
+df = pd.read_csv(PRICES_CSV, parse_dates=['date'])
 df = df.rename(columns={'date': 'Date', 'price_usd': 'Price'})
 # Remove zero/near-zero prices (keeps the trend clean)
 df = df[df['Price'] > 1].copy()
@@ -53,6 +58,6 @@ ax.xaxis.set_major_locator(mdates.YearLocator(2))
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt.savefig('btc_power_law_trend.png',
+plt.savefig(OUTPUT_PNG,
             dpi=300, bbox_inches='tight')
-print("Chart saved: btc_power_law_trend.png")
+print(f"Chart saved: {OUTPUT_PNG.relative_to(REPO_ROOT)}")

@@ -1,9 +1,14 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from datetime import datetime
+from pathlib import Path
 import pandas as pd
+# Resolve paths from the repo root so the script runs from any working directory
+REPO_ROOT = Path(__file__).resolve().parent.parent
+PRICES_CSV = REPO_ROOT / 'data' / 'bitcoin-monthly-prices.csv'
+OUTPUT_PNG = REPO_ROOT / 'charts' / 'halving-cycle-chart.png'
 # Read data from CSV
-df = pd.read_csv('bitcoin_monthly_prices.csv', parse_dates=['date'])
+df = pd.read_csv(PRICES_CSV, parse_dates=['date'])
 dates = df['date'].tolist()
 prices = df['price_usd'].tolist()
 # Halving dates (historical + next projected)
@@ -37,6 +42,6 @@ handles, labels = ax.get_legend_handles_labels()
 by_label = dict(zip(labels, handles))
 ax.legend(by_label.values(), by_label.keys(), loc='upper left')
 plt.tight_layout()
-plt.savefig('btc_halving_cycle_chart.png', dpi=300, bbox_inches='tight')
+plt.savefig(OUTPUT_PNG, dpi=300, bbox_inches='tight')
 # plt.show()   # <-- Delete this line (or comment it)
-print("Plot saved as bbtc_halving_cycle_chart.png")
+print(f"Chart saved: {OUTPUT_PNG.relative_to(REPO_ROOT)}")

@@ -17,12 +17,13 @@ pip install pandas matplotlib scikit-learn
 
 ### Running Scripts
 ```bash
-# Run individual analysis scripts
-python btc_power_law_trend.py      # Generate power-law trend chart
-python btc_halving_cycle_chart.py  # Generate halving cycle chart
+# Run individual analysis scripts (paths resolve from the repo root,
+# so these work from any working directory)
+python scripts/power-law-trend.py      # Generate power-law trend chart
+python scripts/halving-cycle-chart.py  # Generate halving cycle chart
 
 # Run all scripts
-python btc_power_law_trend.py && python btc_halving_cycle_chart.py
+python scripts/power-law-trend.py && python scripts/halving-cycle-chart.py
 ```
 
 ### Testing
@@ -74,7 +75,7 @@ from sklearn.linear_model import LinearRegression
 - **Functions**: `snake_case` (e.g., `calculate_trend()`, `plot_chart()`)
 - **Classes**: `PascalCase` (if any)
 - **Constants**: `UPPER_SNAKE_CASE` (e.g., `REFERENCE_YEAR = 2009`)
-- **Files**: `snake_case.py` (e.g., `btc_power_law_trend.py`)
+- **Files**: `kebab-case.py` (e.g., `power-law-trend.py`)
 
 ### Code Structure
 - **Functions**: Break complex operations into functions with single responsibilities
@@ -103,7 +104,7 @@ from sklearn.linear_model import LinearRegression
 - **Colors**: Use semantic color schemes (blue for data, red for trends)
 - **Labels**: Include units in axis labels, comprehensive titles
 - **Saving**: Use `dpi=300, bbox_inches='tight'` for high-quality output
-- **File Names**: Follow existing pattern: `{chart_type}.png`
+- **File Names**: Follow existing pattern: `charts/{chart_type}.png`
 
 ### Type Hints (Future Enhancement)
 When adding type hints:
@@ -120,11 +121,11 @@ def process_data(df: pd.DataFrame, threshold: float = 1.0) -> pd.DataFrame:
 ### Error Handling Patterns
 ```python
 try:
-    df = pd.read_csv('bitcoin_monthly_prices.csv', parse_dates=['date'])
-except FileNotFoundError:
-    raise FileNotFoundError("bitcoin_monthly_prices.csv not found in current directory")
-except pd.errors.EmptyDataError:
-    raise ValueError("CSV file is empty or invalid")
+    df = pd.read_csv(PRICES_CSV, parse_dates=['date'])
+except FileNotFoundError as err:
+    raise FileNotFoundError(f"price data not found: {PRICES_CSV}") from err
+except pd.errors.EmptyDataError as err:
+    raise ValueError(f"price data is empty or invalid: {PRICES_CSV}") from err
 ```
 
 ### Documentation
@@ -135,19 +136,30 @@ except pd.errors.EmptyDataError:
 
 ### Project Structure
 ```
-btc_regression_analysis/
-├── README.md                    # Project documentation
-├── AGENTS.md                    # This file - agent guidelines
-├── requirements.txt             # Dependencies (create if needed)
-├── bitcoin_monthly_prices.csv   # Input data
-├── btc_power_law_trend.py      # Power-law analysis script
-├── btc_halving_cycle_chart.py  # Halving cycle visualization
-├── .gitignore.txt              # Git ignore rules
-└── .venv/                      # Virtual environment (gitignored)
+bitcoin-price-analysis/
+├── README.md                        # Project documentation
+├── AGENTS.md                        # This file - agent guidelines
+├── SECURITY.md                      # Security policy
+├── requirements.txt                 # Dependencies (create if needed)
+├── .gitignore                       # Git ignore rules
+├── .github/                         # GitHub config (RESERVED - never rename)
+│   ├── dependabot.yml
+│   └── workflows/renovate.yml
+├── data/                            # Input data
+│   └── bitcoin-monthly-prices.csv
+├── scripts/                         # Chart-generating scripts
+│   ├── power-law-trend.py
+│   └── halving-cycle-chart.py
+├── charts/                          # Generated PNG output
+│   ├── power-law-trend.png
+│   └── halving-cycle-chart.png
+└── .venv/                           # Virtual environment (gitignored)
 ```
 
 ### Common Issues to Watch For
-- **File Paths**: Use relative paths, check if files exist before reading
+- **File Paths**: Scripts live in `scripts/` but read `data/` and write `charts/`.
+  Resolve paths from `Path(__file__).resolve().parent.parent`, never from the
+  current working directory, so scripts run correctly from anywhere.
 - **Date Formats**: Ensure consistent date parsing and formatting
 - **Memory Usage**: Be mindful with large datasets (though current data is small)
 - **Dependencies**: Pin versions in requirements.txt for reproducibility

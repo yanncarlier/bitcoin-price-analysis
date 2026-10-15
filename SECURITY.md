@@ -6,7 +6,7 @@ Please **do not** report security vulnerabilities through public GitHub issues.
 
 Use GitHub's private vulnerability reporting instead:
 
-https://github.com/yanncarlier/btc_regression_analysis/security/advisories/new
+https://github.com/yanncarlier/bitcoin-price-analysis/security/advisories/new
 
 When you report it, include:
 
